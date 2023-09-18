@@ -1,0 +1,10 @@
+*.aux
+*.log
+*.out
+*.snm
+*.toc
+*.nav
+*.pdf
+*.vrb
+_minted-*/
+svg-inkscape/

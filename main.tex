@@ -1,0 +1,308 @@
+\documentclass[t]{beamer}
+\usepackage[T1]{fontenc}
+\usepackage{libertinus}
+\usepackage[scaled=0.85]{DejaVuSansMono}
+\usepackage{hyperref}
+\hypersetup{
+colorlinks=true,
+linkcolor=blue,
+linkbordercolor=blue,
+urlcolor=blue,
+urlbordercolor=blue,
+}
+\usepackage{svg}
+\usepackage{wrapfig}
+\usepackage{minted}
+\usepackage{verbatim}
+
+\usetheme{Boadilla}
+\setbeamertemplate{navigation symbols}{}
+
+\makeatother
+\setbeamertemplate{footline}{%
+\hbox{%
+\begin{beamercolorbox}[wd=1.0\paperwidth,ht=2.25ex,dp=1ex]{title in head/foot}%
+\hspace*{1em}%
+\usebeamerfont{title in head/foot}\NoHyper\insertshorttitle\endNoHyper%
+\hfill%
+\insertframenumber{} / \inserttotalframenumber
+\hspace*{1em}%
+\end{beamercolorbox}}%
+}
+\makeatletter
+
+\title{Rust and functional programming}
+\author{Isaac Elliott}
+\date{19 September, 2023}
+
+\begin{document}
+
+
+\frame{\titlepage}
+
+
+\begin{frame}[fragile]
+\frametitle{What is Rust?}
+\begin{comment}
+Test
+\end{comment}
+
+\begin{columns}
+
+\begin{column}[T]{0.75\textwidth}
+
+\url{https://www.rust-lang.org/}
+
+\begin{itemize}
+\item Created at Mozilla in late 2000s and early 2010s
+\item Prioritises safety and performance
+\item Built on modern (30 years or younger) programming language research
+\end{itemize}
+
+\end{column}
+
+\begin{column}[T]{0.25\textwidth}
+\includesvg{images/rust-logo-blk.svg}
+\end{column}
+
+\end{columns}
+
+\vfill
+
+\begin{block}{Hello world}
+\begin{minted}{rust}
+fn main() {
+    println!("Hello world!");
+}
+\end{minted}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[c,fragile]
+\frametitle{What is functional programming?}
+\begin{comment}
+I find functional programming a lot harder to define than something like Rust.
+\end{comment}
+
+\begin{itemize}
+\item Programming with functions?
+\item ...with higher-order functions?
+\item 
+\item Haskell? 
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[c,fragile]
+\begin{center}
+\usebeamerfont{title}{\usebeamercolor[fg]{frametitle}{Personal identity and functional programming}}
+\end{center}
+\begin{comment}
+Before I get into the technical details, I want to talk about a use (misuse?) of the
+term "functional programming": as a sort of "tribal identity marker". Here's something
+true of my experience that might also be true for you:
+
+When I choose between similar things, I have a tendency toward seeing my choice as
+somehow, objectively, "more right" than the alternatives. Usually this tendency is
+incorrect, and it takes a conscious effort for me to see that.
+
+I also enjoy spend time with people who have made similar choices. I like talking about
+programming with other programmers (that's why I'm here tonight!), and listening to music
+with people who have similar tastes. In situations like these, in a community of sorts,
+I feel a kind of satisfaction that I don't feel when I'm alone or with people who are
+extremely different to me.
+
+All this is to say that I find shared context / community / meeting people with similar
+interests to be *very* meaningful.
+
+I've also experienced something kind of toxic that happens when this (usually incorrect)
+tendency to think that my choice is Better spreads to the group and becomes part of the
+way we bond. We start to celebrate the supposed fact that we are the small group who
+made the "right" choice, and start to find meaning in pointing out the ways that everyone
+else is "wrong".
+
+This is kind of how I related to "functional programming" when I was younger. I enjoyed a
+particular style of programming or flavour of programming language, and thought I was
+being attracted to some kind of objective superiority. From that perspective, it was easy to
+be a part of discussions about the "inferiority" of other styles of programming and other
+flavours of programming language. Not critique, which is done in good faith with the intent
+of improving the object of critique, but a sort of destructive and dismissing criticism, a
+perverse pleasure in noting how others have failed to live up to the standard of "functional
+programming".
+
+I failed to see the ways in which my attraction to "functional programming" was due to
+my personal history and my taste for writing software. And I failed to acknowledge the
+nebulousity of this "paradigm" which at the time seemed so objective.
+\end{comment}
+\end{frame}
+
+
+\begin{frame}[c,fragile]
+\frametitle{Common functional programming concepts}
+\begin{comment}
+This is why, instead of presenting a definition of functional programming and measuring
+Rust against it, I'm going cover a few topics that seem most closely associated to
+"functional programming" (whatever *that* is), and talk about the extent to which they show
+up in Rust.
+
+Before I reveal them, I want to do a poll. What are some of the ideas *you* would include?
+\end{comment}
+
+\begin{itemize}
+\item Algebraic datatypes and higher-order functions
+\item Immutability
+\item Static types
+\item Equational reasoning
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Algebraic datatypes and higher-order functions --- ADTs}
+
+\begin{columns}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{Definition}
+\small
+\begin{minted}{rust}
+enum Sum<A, B>{
+    Left(A),
+    Right(B)
+}
+
+struct Product<A, B>{
+    first: A,
+    second: B
+}
+\end{minted}
+\end{block}
+\end{column}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{Creation}
+\small
+\begin{minted}{rust}
+let x = Sum::Left(1);
+let y = Sum::Right(true);
+
+let z = Product{
+    first: "x",
+    second: "y"
+};
+
+
+\end{minted}
+\end{block}
+\end{column}
+
+\end{columns}
+
+\begin{block}{Use}
+\begin{columns}
+\begin{column}[T]{0.48\textwidth}
+\small
+\begin{minted}{rust}
+let x: Sum<A, B> = ...;
+let y = match x {
+    Sum::Left(a) => ...,
+    Sum::Right(b) => ...
+};
+\end{minted}
+\end{column}
+\begin{column}[T]{0.48\textwidth}
+\small
+\begin{minted}{rust}
+let x: Product<A, B> = ...;
+let y = x.first;
+let z = y.second;
+\end{minted}
+\end{column}
+\end{columns}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Algebraic datatypes and higher-order functions --- ADTs}
+
+\begin{itemize}
+\item Extremely easy to define, create, and use
+\item Has a number of shorthands that make ADTs even more enjoyable to work with
+\begin{itemize}
+\medskip
+\item Named enum fields
+\begin{minted}{rust}
+enum Sum<A, B>{
+    Left{left_arg: A},
+    Right{right_arg: B}
+}
+\end{minted}
+\medskip
+\item Named field punning
+\begin{minted}{rust}
+let first = ..; let second = ..;
+let z = Pair{first, second};
+\end{minted}
+\medskip
+\item Disjunctive patterns / "or-patterns"
+\begin{minted}{rust}
+match x {
+    0 => ..,
+    1 | 2 | 3 => ..,
+    4 => ..,
+    _ => ..
+}
+\end{minted}
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Algebraic datatypes and higher-order functions --- HOFs}
+
+Rust has anonymous functions, known as \emph{closures}.
+
+\begin{columns}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{Creation}
+\small
+\begin{minted}{rust}
+let f = |x| x + 1;
+\end{minted}
+\end{block}
+\end{column}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{Use}
+\small
+\begin{minted}{rust}
+let y = f(x);
+\end{minted}
+\end{block}
+\end{column}
+
+\end{columns}
+
+\bigskip
+
+Higher-order functions are fairly common in the standard library.
+
+\begin{block}{Example: \href{https://doc.rust-lang.org/std/iter/struct.Map.html}{\texttt{map}}}
+\begin{minted}{rust}
+let xs: Vec<u32> = vec![1, 2, 3, 4];
+let ys: Vec<u32> = xs.iter().map(|x| x + 1).collect();
+\end{minted}
+\end{block}
+
+\end{frame}
+
+
+\end{document}
