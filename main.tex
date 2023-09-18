@@ -14,9 +14,12 @@ urlbordercolor=blue,
 \usepackage{wrapfig}
 \usepackage{minted}
 \usepackage{verbatim}
+\usepackage{soul}
+\usepackage{upquote}
 
 \usetheme{Boadilla}
 \setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{enumerate items}[circle]
 
 \makeatother
 \setbeamertemplate{footline}{%
@@ -299,6 +302,773 @@ Higher-order functions are fairly common in the standard library.
 \begin{minted}{rust}
 let xs: Vec<u32> = vec![1, 2, 3, 4];
 let ys: Vec<u32> = xs.iter().map(|x| x + 1).collect();
+\end{minted}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Algebraic datatypes and higher-order functions --- HOFs}
+
+Working with closures / HOFs in Rust is more complex than in other languages.
+
+\begin{block}{Haskell}
+\begin{minted}{haskell}
+map :: (a -> b) -> Maybe a -> Maybe b
+maybe :: b -> (a -> b) -> Maybe a -> b
+\end{minted}
+\end{block}
+
+\begin{block}{Rust}
+\small
+\begin{minted}{rust}
+fn map<A, B, F: FnOnce(A) -> B>(
+    f: F,
+    value: Option<A>
+) -> Option<B>
+
+fn map_or<A, B, F: FnOnce(A) -> B>(
+    default: B,
+    f: F,
+    value: Option<A>
+) -> B
+\end{minted}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[c,fragile]
+\frametitle{Algebraic datatypes and higher-order functions --- HOFs}
+\begin{comment}
+Most languages have a single function type. Rust has more. There are 3 kinds of
+closure: FnOnce, Fn, and FnMut. I won't explain what they mean right now.
+Let me just say: they are all justified in the context of Rusts goals of safety and
+performance. The price of achieving these goals for closures in Rust is simplicity:
+when you write a higher-order function, you need to figure out which kind of
+higher-order function is most appropriate.
+\end{comment}
+
+Most languages have a single function type.
+
+\bigskip
+
+Rust has 3 kinds of closure:
+
+\begin{itemize}
+\item \href{https://doc.rust-lang.org/std/ops/trait.FnOnce.html}{\texttt{FnOnce}}
+\item \href{https://doc.rust-lang.org/std/ops/trait.Fn.html}{\texttt{Fn}}
+\item \href{https://doc.rust-lang.org/std/ops/trait.FnMut.html}{\texttt{FnMut}}
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Algebraic datatypes and higher-order functions}
+\begin{comment}
+It seems reasonable to me to claim that higher-order functions are an essential part
+of functional programming.
+
+I've put algebraic datatypes and higher-order functions in the same section
+because they're actually interdefinable. If you have one, then you have the other
+(assuming you have first-order function definitions).
+
+Using higher-order functions to define algebraic datatypes is called Church encoding.
+
+Going the other way, algebraic datatypes (together with first-order functions) to
+can be used to define higher-order functions through a method
+called Defunctionalisation, which was the subject of Jack's recent talk, "Everything
+looks like a function".
+\end{comment}
+
+Higher-order functions (in some form or another) seem like an essential component of "functional programming".
+
+\bigskip
+
+Algebraic datatypes and higher-order functions are interdefinable:
+
+\begin{itemize}
+\item ADTs via HOFs --- \href{https://en.wikipedia.org/wiki/Church_encoding}{Church encoding}
+\item HOFs via ADTs --- \href{https://en.wikipedia.org/wiki/Defunctionalization}{Defunctionalization}
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Immutability}
+
+Variable bindings in Rust are immutable by default:
+
+\begin{block}{Immutable by default}
+\small
+\begin{minted}{rust}
+let x = 1;
+x = x + 1; // error: cannot assign twice to immutable variable `x`
+\end{minted}
+\end{block}
+
+\bigskip
+
+Rust allows mutability, which comes in 3 flavours:
+
+\begin{itemize}
+\item Local mutability --- mild
+\item Mutable references --- medium
+\item Interior (hidden) mutability --- spicy
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[c,fragile]
+\frametitle{\st{Im}Mutability --- Local}
+\begin{comment}
+Most benign form of mutability because it is compositional. When I call a
+function, that function's use of local mutability is not a concern to me.
+\end{comment}
+
+\begin{block}{Local mutability}
+\begin{minted}{rust}
+fn two() -> u32 {
+    let mut x: u32 = 0;
+    x += 1;
+    x += 1;
+    x
+}
+\end{minted}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[c,fragile]
+\frametitle{\st{Im}Mutability --- References}
+\begin{comment}
+Because the mutability is in the type signature, I'm consciously opting in to
+(potential) mutation when I call such functions.
+\end{comment}
+
+\begin{block}{Definition}
+\small
+\begin{minted}{rust}
+fn increment_immutable(x: &u32) {
+    *x = x + 1; // error: cannot assign to `*x`, which is
+                // behind a `&` reference
+}
+
+fn increment_mutable(x: &mut u32) {
+    *x = x + 1; // ok
+}
+\end{minted}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[c,fragile]
+\frametitle{\st{Im}Mutability --- References}
+\begin{comment}
+Because the mutability is in the type signature, I'm consciously opting in to
+(potential) mutation when I call such functions.
+\end{comment}
+
+\begin{block}{Use}
+\small
+\begin{minted}{rust}
+fn increment_mutable(x: &mut u32) {
+    *x = x + 1;
+}
+
+let x = 1;
+increment_mutable(&x) // error: types differ in mutability
+
+let x = 1;
+increment_mutable(&mut x) // error: cannot borrow `x` as mutable,
+                          // as it is not declared as mutable
+let mut x = 1;
+increment_mutable(&mut x) // ok
+\end{minted}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{\st{Im}Mutability --- Interior (hidden)}
+\begin{comment}
+Some types allow mutation through an "immutable" reference. That's a hint that the
+term "immutable reference" is a bit of a misnomer. Instead of talking about "immutable"
+and "mutable" references, sometimes it's better to use the terms "shared" and "exclusive",
+respectively.
+
+Rust prevents data races by only allowing writes via an exclusive reference.
+\end{comment}
+
+Some types allow mutation through an "immutable" reference:
+
+\begin{itemize}
+\item \href{https://doc.rust-lang.org/std/cell/struct.Cell.html}{\texttt{Cell}}
+\item \href{https://doc.rust-lang.org/std/cell/struct.RefCell.html}{\texttt{RefCell}}
+\item \href{https://doc.rust-lang.org/std/sync/struct.Mutex.html}{\texttt{Mutex}}
+\item \href{https://doc.rust-lang.org/std/sync/struct.RwLock.html}{\texttt{RwLock}}
+\item \href{https://doc.rust-lang.org/std/sync/atomic/}{atomics}
+\end{itemize}
+
+\bigskip
+
+\begin{tabular}{l l l l}
+Type & Better Name & Multiplicity & Can store \\
+\hline
+\texttt{\&T} & Shared reference & Many & No \\
+\texttt{\&mut T} & Exclusive reference & One & Yes
+\end{tabular}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{\st{Im}Mutability --- Interior (hidden)}
+\begin{comment}
+When is interior mutability useful? 
+
+It's necessary for thread-shared mutable state, and that's the only time I've used it.
+I've never used `Cell` or `RefCell` and I haven't thought about when they'd be justified.
+\end{comment}
+
+\begin{block}{Example}
+\begin{minted}{rust}
+fn increment_interior(x: &Cell<u64>) -> u64 {
+    let result = x.get() + x.get();
+    x.set(x.get(x) + 1);
+    result
+}
+\end{minted}
+\end{block}
+
+Mutability is no longer in the type signature.
+
+\begin{block}{Interior mutability}
+\begin{minted}{rust}
+struct S{
+    x: Cell<u64>
+}
+
+// Does `f_S` mutate its argument?
+fn f_S(s: &S) -> { .. }
+\end{minted}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[c,fragile]
+\frametitle{Static types --- common features}
+
+\begin{block}{Algebraic datatypes --- structs and enums}
+\begin{minted}{rust}
+struct TypeName{
+  field_1: FieldType1,
+  field_2: FieldType2,
+  ...
+}
+
+enum TypeName{
+  Constructor1(FieldType11, FieldType12, ...),
+  Constructor2,
+  ...,
+}
+\end{minted}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[c,fragile]
+\frametitle{Static types --- common features}
+
+\begin{block}{Parametric polymorphism --- generics}
+\begin{minted}{rust}
+struct TypeName<Param1, Param2>{ ... }
+enum TypeName<Param1, Param2>{ ... }
+
+fn id<A>(x: A) -> A { x }
+\end{minted}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[c,fragile]
+\frametitle{Static types --- common features}
+
+\begin{block}{Ad-hoc polymorphism --- traits}
+\begin{minted}{rust}
+trait Monoid {
+  fn empty() -> Self;
+  fn combine(self, other: Self) -> Self
+}
+
+fn fold<M: Monoid>(xs: Vec<M>) -> M { .. }
+\end{minted}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[c,fragile]
+\frametitle{Static types --- uncommon features}
+
+\begin{itemize}
+\item Reference lifetime analysis (borrow checking)
+\item Uniqueness types
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Static types --- reference lifetime analysis}
+\begin{comment}
+Reference lifetime analysis, generally known as "borrow checking", determines at compile
+time whether a program references data in a safe way.
+
+For example, you're allowed to get a refrence to a struct's field, pass it to and return
+it from functions, store it in another datatype, etc. and the compiler will prevent you
+from doing anything that could cause the reference to outlive the struct. In other words,
+no dangling references / use-after-frees.
+\end{comment}
+
+Every reference points to valid memory.
+
+\begin{columns}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{Rust}
+\tiny
+\begin{minted}{rust}
+struct IntAndBool{
+  first: i32,
+  second: bool
+}
+
+fn first<'a>(input: &'a IntAndBool) -> &'a i32 {
+  &input.first
+}
+
+fn bad<'a>() -> &'a i32 {
+    let x = IntAndBool{first: 99, second: true};
+    let y = first(&x);
+    y
+//  ^ error: returns a value referencing data
+//    owned by the current function
+}
+\end{minted}
+\end{block}
+\end{column}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{C}
+\tiny
+\begin{minted}{c}
+typedef struct {
+  long first;
+  bool second;
+} IntAndBool;
+
+long* first(IntAndBool* input) {
+  return &input->first;
+}
+
+long* bad() {
+  IntAndBool x = { .first = 99, .second = true };
+  long* y = first(&x);
+  return y; // ok...? 
+}
+\end{minted}
+\end{block}
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Static types --- uniqueness types}
+
+\texttt{\&T} --- shared
+  
+\begin{columns}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{Concurrent use}
+\small
+\begin{minted}{rust}
+fn f(x: &T, y: &T) { .. }
+
+..
+
+let x: T = ..;
+f(&x, &x); // ok
+\end{minted}
+\end{block}
+\end{column}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{Sequential use}
+\small
+\begin{minted}{rust}
+fn g(x: &T) { .. }
+fn h(x: &T) { .. }
+
+..
+
+let x: T = ..;
+f(&x);
+g(&x); // ok
+\end{minted}
+\end{block}
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Static types --- uniqueness types}
+
+\texttt{\&mut T} --- exclusive
+  
+\begin{columns}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{Concurrent use}
+\small
+\begin{minted}{rust}
+fn f(x: &mut T, y: &mut T) { .. }
+
+..
+
+let mut x: T = ..;
+// error: cannot borrow `x` as
+// mutable more than once at
+// a time
+f(&mut x, &mut x);
+//        ^^^^^^ second mutable
+//        borrow occurs here 
+\end{minted}
+\end{block}
+\end{column}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{Sequential use}
+\small
+\begin{minted}{rust}
+fn g(x: &mut T) { .. }
+fn h(x: &mut T) { .. }
+
+..
+
+let mut x: T = ..;
+f(&mut x);
+g(&mut x); // ok
+\end{minted}
+\end{block}
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Static types --- uniqueness types}
+
+\texttt{T} --- unique
+  
+\begin{columns}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{Concurrent use}
+\small
+\begin{minted}{rust}
+fn f(x: T, y: T) { .. }
+
+..
+
+let x: T = ..;
+// error: use of moved value `x`
+f(x, x);
+//   ^ value used here after move
+\end{minted}
+\end{block}
+\end{column}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{Sequential use}
+\small
+\begin{minted}{rust}
+fn g(x: T) { .. }
+fn h(x: T) { .. }
+
+..
+
+let x: T = ..;
+f(x);
+// error: use of moved value `x`
+g(x);
+//^ value used here after move
+\end{minted}
+\end{block}
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}[c,fragile]
+\frametitle{Static types and functional programming}
+\begin{comment}
+There's a deep theoretical reason that types are associated with functional programming.
+The lambda calculus is a turing-complete model of computation which consists *only* of
+functions. The definitive functional programming language. There are ways of defining
+type systems for the lambda calculus that are equivalent to mathematical logics. In this
+setting, a type is equivalent to a proposition, and a well-typed lambda calculus program
+is a proof of that proposition. This is known as the Curry-Howard correspondence and I
+think Donovan will be covering it in more detail next month. 
+
+Given this, some people might suggest that a functional programming language is one
+that corresponds to a logic via Curry-Howard.
+
+The validity of "types as propositions and proofs as programs" for a programming
+language requires type checking of that language to be decidable.
+
+Rust's type checker is known to be undecidable. It's possible to write Rust programs
+that would take an infinite amount of time to type check. I think it's nearly impossible
+in a typical software engineering context.
+\end{comment}
+
+TODO
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Equational reasoning}
+
+Reasoning about / manipulating programs as if they are a set of equations.
+
+\begin{columns}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{Factor out}
+\begin{minted}{rust}
+(y + 1) * (y + 1)
+\end{minted}
+
+\(\leadsto\)
+
+\begin{minted}{rust}
+let x = y + 1;
+x * x
+\end{minted}
+\end{block}
+\end{column}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{Inline}
+\begin{minted}{rust}
+let x = y + 1;
+x * x
+\end{minted}
+
+\(\leadsto\)
+
+\begin{minted}{rust}
+(y + 1) * (y + 1)
+\end{minted}
+\end{block}
+\end{column}
+
+\end{columns}
+
+\begin{columns}
+
+\begin{column}[T]{0.24\textwidth}
+\end{column}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{Simplify}
+\begin{minted}{rust}
+let y = x * 1 + 2
+\end{minted}
+
+\(\leadsto\)
+
+\begin{minted}{rust}
+let y = x + 2
+\end{minted}
+\end{block}
+\end{column}
+
+\begin{column}[T]{0.24\textwidth}
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Equational reasoning}
+Not always possible in Rust.
+
+\begin{columns}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{Example}
+\begin{minted}{rust}
+let mut x: u32 = 2;
+
+let mut f = || -> u32 {
+    x += 1;
+    x
+};
+
+let y: u32 = f();
+y + y
+\end{minted}
+\end{block}
+\end{column}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{Execution}
+\begin{minted}{rust}
+let y = f();
+y + y
+\end{minted}
+
+\(\leadsto\)
+
+\begin{minted}{rust}
+let y = 3;
+y + y
+\end{minted}
+
+\(\leadsto\)
+
+\begin{minted}{rust}
+3 + 3
+\end{minted}
+
+\(\leadsto\)
+
+\begin{minted}{rust}
+6
+\end{minted}
+\end{block}
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Equational reasoning}
+Not always possible in Rust.
+
+\begin{columns}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{Example (inlined)}
+\begin{minted}{rust}
+let mut x: u32 = 2;
+
+let mut f = || -> u32 {
+    x += 1;
+    x
+};
+
+// let y: u32 = f();
+f() + f()
+\end{minted}
+\end{block}
+\end{column}
+
+\begin{column}[T]{0.48\textwidth}
+\begin{block}{Execution (inlined)}
+\begin{minted}{rust}
+f() + f()
+\end{minted}
+
+\(\leadsto\)
+
+\begin{minted}{rust}
+3 + f()
+\end{minted}
+
+\(\leadsto\)
+
+\begin{minted}{rust}
+3 + 4
+\end{minted}
+
+\(\leadsto\)
+
+\begin{minted}{rust}
+7
+\end{minted}
+\end{block}
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Equational reasoning}
+\begin{comment}
+An expression that depends on an implicit context can evaluate to different results at
+different points in the program.
+
+In example 1, the expression `f(x)` applying the same function to the same reference
+could return different values at different points in the program. It depends on an
+implicit mutable store.
+
+An expression that *changes* an implicit context is not safe to inline, even if it
+returns the same result every time. Inlining such expressions can change the meaning
+of the program, because the program's meaning depends on how many times the expression
+is evaluated.
+
+\end{comment}
+
+Equational reasoning can fail for two reasons:
+
+\begin{enumerate}
+\item Evaluation of an expression depends on implicit context
+\item Evaluation of an expression changes an implicit context
+\end{enumerate}
+
+\begin{block}{Example 1 --- implicit dependency}
+\begin{minted}{rust}
+fn f(x: &mut u32) -> u32 { *x + 1 }
+
+let x: &mut u32 = ..;
+f(x)
+\end{minted}
+\end{block}
+
+\begin{block}{Example 2 --- implicit change}
+\begin{minted}{rust}
+fn f(x: &mut u32) -> u32 { *x += 1; 0 }
+
+let x: &mut u32 = ..;
+f(x)
 \end{minted}
 \end{block}
 

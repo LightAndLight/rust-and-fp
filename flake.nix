@@ -10,7 +10,7 @@
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
             (texlive.combine {
-              inherit (texlive) scheme-basic
+              inherit (texlive) scheme-small
               beamer
               libertinus 
               dejavu
@@ -23,7 +23,9 @@
               transparent 
               catchfile 
               wrapfig
-              minted; 
+              minted
+              upquote
+              soul; 
             })
             
             inkscape
