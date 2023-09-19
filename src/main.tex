@@ -59,6 +59,7 @@ urlbordercolor=blue,
 
 \begin{itemize}
 \item Created at Mozilla in late 2000s and early 2010s
+\item "Systems programming" language
 \item Prioritises safety and performance
 \item Built on modern (30 years or younger) programming language research
 \end{itemize}
@@ -81,20 +82,54 @@ fn main() {
 \end{minted}
 \end{block}
 
+\note{
+Rust is commonly described as a "systems programming" language.
+To me it's a programming language for people who want to pay more attention
+to machine-level details, such as memory layout, instruction counts, and amount of branching.
+
+\medskip
+
+It differs from C in its approach to safety.
+Whereas C favours simplicity and performance at the expense of safety, Rust favours
+safety and performance at the expense of simplicity.
+Rust is a more complex programming language than C, and Rust compilers are harder to
+implement than C compilers, because the Rust language and compiler does more for the
+programmer.
+}
 \end{frame}
 
 
 \begin{frame}[c,fragile]
-\frametitle{What is functional programming?}
+\frametitle{What \emph{is} functional programming?}
 
 \begin{itemize}
 \item Programming with functions?
 \item ...with higher-order functions?
-\item 
-\item Haskell? 
+\item ...with immutable data structures?
+\item Writing Haskell in disguise? 
 \end{itemize}
 
-\note{I find functional programming a lot harder to define than something like Rust.}
+\note{
+What \emph{is} functional programming?
+
+\medskip
+
+Is it programming with functions? With higher-order functions? With immutable data structures?
+Does functional programming just mean, "doing your best to embed a Haskell dialect in your
+language of choice"?
+
+\medskip
+
+I'm not going to try to answer this question. I think the question of whether it \emph{is}
+anything in particular might be misguided. People have spent a lot of energy debating
+what should and shouldn't be considered functional programming, and which languages
+should be considered "functional". Right now I don't see much value in an algorithm
+that decides what is and isn't "functional".
+
+\medskip
+
+Here's why:
+}
 \end{frame}
 
 
@@ -138,12 +173,12 @@ else is "wrong".
 
 This is kind of how I related to "functional programming" when I was younger. I enjoyed a
 particular style of programming or flavour of programming language, and thought I was
-being attracted to some kind of objective superiority. From that perspective, it was easy to
-be a part of discussions about the "inferiority" of other styles of programming and other
-flavours of programming language. Not critique, which is done in good faith with the intent
-of improving the object of critique, but a sort of destructive and dismissing criticism, a
-perverse pleasure in noting how others have failed to live up to the standard of "functional
-programming".
+being attracted to some kind of objective superiority. Sometimes I even had a feeling of
+\emph{ethical} superiority.
+Under those perspectives, at the worst of times, the question of
+"is X functional programming?" could be less like
+asking, "in which section of the library do we put the book on X?" and more like,
+"do I approve of X or is it yucky / weird / other?"
 
 \medskip
 
@@ -158,22 +193,29 @@ nebulousity of this "paradigm" which at the time seemed so objective.
 \frametitle{Common functional programming concepts}
 
 \begin{itemize}
-\item Algebraic datatypes and higher-order functions
-\item Immutability
-\item Static types
-\item Equational reasoning
+\item<2-> Algebraic datatypes and higher-order functions
+\item<3-> Immutability
+\item<4-> Static types
+\item<5-> Equational reasoning
 \end{itemize}
 
 \note{
-So instead of presenting a definition of functional programming and measuring
-Rust against it, I'm going cover a few topics that seem most closely associated to
-"functional programming" (whatever \emph{that} is), and talk about the extent to which they show
-up in Rust.
+So as an effort of humility, instead of presenting a definition of functional programming
+and measuring Rust against it, I'm going cover a few topics that seem most closely
+associated to "functional programming" (whatever \emph{that} is), and talk about the
+extent to which they show up in Rust.
 
 \medskip
 
 Before I reveal them, I want to do a survey. What are some of the ideas \emph{you} would include?
 }
+\end{frame}
+
+
+\begin{frame}[c,fragile]
+\begin{center}
+\usebeamerfont{title}{\usebeamercolor[fg]{frametitle}{Algebraic datatypes and higher-order functions}}
+\end{center}
 \end{frame}
 
 
@@ -419,6 +461,13 @@ looks like a function".
 \end{frame}
 
 
+\begin{frame}[c,fragile]
+\begin{center}
+\usebeamerfont{title}{\usebeamercolor[fg]{frametitle}{Immutability}}
+\end{center}
+\end{frame}
+
+
 \begin{frame}[fragile]
 \frametitle{Immutability}
 
@@ -594,6 +643,13 @@ When is interior mutability useful?
 It's necessary for thread-shared mutable state, and that's the only time I've used it.
 I've never used `Cell` or `RefCell` and I haven't thought about when they'd be justified.
 }
+\end{frame}
+
+
+\begin{frame}[c,fragile]
+\begin{center}
+\usebeamerfont{title}{\usebeamercolor[fg]{frametitle}{Static types}}
+\end{center}
 \end{frame}
 
 
@@ -906,6 +962,13 @@ in a typical software engineering context.
 \end{frame}
 
 
+\begin{frame}[c,fragile]
+\begin{center}
+\usebeamerfont{title}{\usebeamercolor[fg]{frametitle}{Equational reasoning}}
+\end{center}
+\end{frame}
+
+
 \begin{frame}[fragile]
 \frametitle{Equational reasoning}
 
@@ -1188,7 +1251,9 @@ fn add(x: u32, y: u32) -> u32 {
 I've showed a bunch of examples where mutability, in particular mutable references, breaks
 equational reasoning. But mutability isn't \emph{intrinsically} opposed to equational reasoning.
 
-Here is an example of a pure function that uses mutability internally. Equational reasoning
+\medskip
+
+Here's an example of a pure function that uses mutability internally. Equational reasoning
 still holds.
 }
 \end{frame}
@@ -1345,6 +1410,13 @@ let new_xs = push(xs, 4); // ...until we actually change it
 \end{frame}
 
 
+\begin{frame}[c,fragile]
+\begin{center}
+\usebeamerfont{title}{\usebeamercolor[fg]{frametitle}{Closing remarks}}
+\end{center}
+\end{frame}
+
+
 \begin{frame}[c]
 \frametitle{Summary}
 
@@ -1360,7 +1432,7 @@ How Rust relates to:
 \end{frame}
 
 
-\begin{frame}
+\begin{frame}[c]
 \frametitle{Functional programming?}
 
 \begin{itemize}
@@ -1368,7 +1440,10 @@ How Rust relates to:
 \begin{itemize}
 \item Independent of specific program behaviours
 \end{itemize}
-\item Needs to be counterbalanced by other topics / concerns
+\item There are many dimensions of software quality that functional programming can't address
+\begin{itemize}
+\item That's okay and even good!
+\end{itemize}
 \end{itemize}
 
 \note<+>{
@@ -1410,6 +1485,7 @@ I think that in the past my definition of "good software" was missing a few dime
 which lead to me overestimating the important of "functional programming" in "good software".
 Now I know that FP isn't a panacea and it doesn't have to be. Whatever it is, it's now one
 of many tools of thought for pushing my software along a few of many dimensions of "good".
+And that's awesome, because learning's fun and there's even more to learn!
 }
 \end{frame}
 

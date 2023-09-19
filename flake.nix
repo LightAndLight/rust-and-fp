@@ -9,6 +9,8 @@
       in {
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
+            which
+
             (texlive.combine {
               inherit (texlive) scheme-small
               beamer
@@ -27,11 +29,11 @@
               upquote
               soul; 
             })
-            
+          
             inkscape
             python310Packages.pygments
           ];
-        };
+        };        
       }
     );
 }
