@@ -34,6 +34,10 @@ urlbordercolor=blue,
 }
 \makeatletter
 
+\setbeameroption{show notes on second screen=right}
+%\setbeameroption{hide notes}
+\setbeamertemplate{note page}{\insertnote\par}
+
 \title{Rust and functional programming}
 \author{Isaac Elliott}
 \date{19 September, 2023}
@@ -46,9 +50,6 @@ urlbordercolor=blue,
 
 \begin{frame}[fragile]
 \frametitle{What is Rust?}
-\begin{comment}
-Test
-\end{comment}
 
 \begin{columns}
 
@@ -85,9 +86,6 @@ fn main() {
 
 \begin{frame}[c,fragile]
 \frametitle{What is functional programming?}
-\begin{comment}
-I find functional programming a lot harder to define than something like Rust.
-\end{comment}
 
 \begin{itemize}
 \item Programming with functions?
@@ -96,6 +94,7 @@ I find functional programming a lot harder to define than something like Rust.
 \item Haskell? 
 \end{itemize}
 
+\note{I find functional programming a lot harder to define than something like Rust.}
 \end{frame}
 
 
@@ -103,14 +102,18 @@ I find functional programming a lot harder to define than something like Rust.
 \begin{center}
 \usebeamerfont{title}{\usebeamercolor[fg]{frametitle}{Personal identity and functional programming}}
 \end{center}
-\begin{comment}
+\note<+>{
 Before I get into the technical details, I want to talk about a use (misuse?) of the
 term "functional programming": as a sort of "tribal identity marker". Here's something
 true of my experience that might also be true for you:
 
+\medskip
+
 When I choose between similar things, I have a tendency toward seeing my choice as
 somehow, objectively, "more right" than the alternatives. Usually this tendency is
 incorrect, and it takes a conscious effort for me to see that.
+
+\medskip
 
 I also enjoy spend time with people who have made similar choices. I like talking about
 programming with other programmers (that's why I'm here tonight!), and listening to music
@@ -118,14 +121,20 @@ with people who have similar tastes. In situations like these, in a community of
 I feel a kind of satisfaction that I don't feel when I'm alone or with people who are
 extremely different to me.
 
-All this is to say that I find shared context / community / meeting people with similar
-interests to be *very* meaningful.
+\medskip
 
+All this is to say that I find shared context / community / meeting people with similar
+interests to be \emph{very} meaningful.
+}
+
+\note<+>{
 I've also experienced something kind of toxic that happens when this (usually incorrect)
 tendency to think that my choice is Better spreads to the group and becomes part of the
 way we bond. We start to celebrate the supposed fact that we are the small group who
 made the "right" choice, and start to find meaning in pointing out the ways that everyone
 else is "wrong".
+
+\medskip
 
 This is kind of how I related to "functional programming" when I was younger. I enjoyed a
 particular style of programming or flavour of programming language, and thought I was
@@ -136,23 +145,17 @@ of improving the object of critique, but a sort of destructive and dismissing cr
 perverse pleasure in noting how others have failed to live up to the standard of "functional
 programming".
 
+\medskip
+
 I failed to see the ways in which my attraction to "functional programming" was due to
-my personal history and my taste for writing software. And I failed to acknowledge the
+my personal history and my taste in writing software. And I failed to acknowledge the
 nebulousity of this "paradigm" which at the time seemed so objective.
-\end{comment}
+}
 \end{frame}
 
 
 \begin{frame}[c,fragile]
 \frametitle{Common functional programming concepts}
-\begin{comment}
-This is why, instead of presenting a definition of functional programming and measuring
-Rust against it, I'm going cover a few topics that seem most closely associated to
-"functional programming" (whatever *that* is), and talk about the extent to which they show
-up in Rust.
-
-Before I reveal them, I want to do a poll. What are some of the ideas *you* would include?
-\end{comment}
 
 \begin{itemize}
 \item Algebraic datatypes and higher-order functions
@@ -160,6 +163,17 @@ Before I reveal them, I want to do a poll. What are some of the ideas *you* woul
 \item Static types
 \item Equational reasoning
 \end{itemize}
+
+\note{
+So instead of presenting a definition of functional programming and measuring
+Rust against it, I'm going cover a few topics that seem most closely associated to
+"functional programming" (whatever \emph{that} is), and talk about the extent to which they show
+up in Rust.
+
+\medskip
+
+Before I reveal them, I want to do a survey. What are some of the ideas \emph{you} would include?
+}
 \end{frame}
 
 
@@ -341,14 +355,6 @@ fn map_or<A, B, F: FnOnce(A) -> B>(
 
 \begin{frame}[c,fragile]
 \frametitle{Algebraic datatypes and higher-order functions --- HOFs}
-\begin{comment}
-Most languages have a single function type. Rust has more. There are 3 kinds of
-closure: FnOnce, Fn, and FnMut. I won't explain what they mean right now.
-Let me just say: they are all justified in the context of Rusts goals of safety and
-performance. The price of achieving these goals for closures in Rust is simplicity:
-when you write a higher-order function, you need to figure out which kind of
-higher-order function is most appropriate.
-\end{comment}
 
 Most languages have a single function type.
 
@@ -362,28 +368,23 @@ Rust has 3 kinds of closure:
 \item \href{https://doc.rust-lang.org/std/ops/trait.FnMut.html}{\texttt{FnMut}}
 \end{itemize}
 
+\note{
+Most languages have a single function type. Rust has more. There are 3 kinds of
+closure: \texttt{FnOnce}, \texttt{Fn}, and \texttt{FnMut}. I won't explain what they mean
+right now.
+Let me just say: they are all justified in the context of Rust's goals of safety and
+performance. The price of achieving these goals for closures in Rust is simplicity:
+when you write a higher-order function, you need to figure out which kind of
+higher-order function is most appropriate.
+}
 \end{frame}
 
 
 \begin{frame}[fragile]
 \frametitle{Algebraic datatypes and higher-order functions}
-\begin{comment}
-It seems reasonable to me to claim that higher-order functions are an essential part
-of functional programming.
 
-I've put algebraic datatypes and higher-order functions in the same section
-because they're actually interdefinable. If you have one, then you have the other
-(assuming you have first-order function definitions).
-
-Using higher-order functions to define algebraic datatypes is called Church encoding.
-
-Going the other way, algebraic datatypes (together with first-order functions) to
-can be used to define higher-order functions through a method
-called Defunctionalisation, which was the subject of Jack's recent talk, "Everything
-looks like a function".
-\end{comment}
-
-Higher-order functions (in some form or another) seem like an essential component of "functional programming".
+Higher-order functions (in some form or another) seem like an essential component
+of "functional programming".
 
 \bigskip
 
@@ -394,6 +395,27 @@ Algebraic datatypes and higher-order functions are interdefinable:
 \item HOFs via ADTs --- \href{https://en.wikipedia.org/wiki/Defunctionalization}{Defunctionalization}
 \end{itemize}
 
+\note{
+It seems reasonable to me to claim that higher-order functions are an essential part
+of functional programming.
+
+\medskip
+
+I've put algebraic datatypes and higher-order functions in the same section
+because they're actually interdefinable. If you have one, then you have the other
+(assuming you have first-order function definitions).
+
+\medskip
+
+Using higher-order functions to define algebraic datatypes is called Church encoding.
+
+\medskip
+
+Going the other way, algebraic datatypes (together with first-order functions) to
+can be used to define higher-order functions through a method
+called Defunctionalisation, which was the subject of Jack's recent talk, "Everything
+looks like a function".
+}
 \end{frame}
 
 
@@ -424,10 +446,6 @@ Rust allows mutability, which comes in 3 flavours:
 
 \begin{frame}[c,fragile]
 \frametitle{\st{Im}Mutability --- Local}
-\begin{comment}
-Most benign form of mutability because it is compositional. When I call a
-function, that function's use of local mutability is not a concern to me.
-\end{comment}
 
 \begin{block}{Local mutability}
 \begin{minted}{rust}
@@ -440,15 +458,15 @@ fn two() -> u32 {
 \end{minted}
 \end{block}
 
+\note{
+This is the most benign form of mutability because it is compositional. When I call a
+function, that function's use of local mutability is not a concern to me.
+}
 \end{frame}
 
 
 \begin{frame}[c,fragile]
 \frametitle{\st{Im}Mutability --- References}
-\begin{comment}
-Because the mutability is in the type signature, I'm consciously opting in to
-(potential) mutation when I call such functions.
-\end{comment}
 
 \begin{block}{Definition}
 \small
@@ -464,15 +482,22 @@ fn increment_mutable(x: &mut u32) {
 \end{minted}
 \end{block}
 
+\note{
+I've lost some compositionality: if I'm not careful with my design then I could
+create a history-sensitive function. A function that only works properly when I
+call it in the right place at the right time.
+
+\medskip
+
+The upside is that because the mutability is in the type signature I'm reminded of
+this possibility, so I can more consciously opting in to (potential) mutation when
+I call such functions.
+}
 \end{frame}
 
 
 \begin{frame}[c,fragile]
 \frametitle{\st{Im}Mutability --- References}
-\begin{comment}
-Because the mutability is in the type signature, I'm consciously opting in to
-(potential) mutation when I call such functions.
-\end{comment}
 
 \begin{block}{Use}
 \small
@@ -492,19 +517,16 @@ increment_mutable(&mut x) // ok
 \end{minted}
 \end{block}
 
+\note{
+You can only take a mutable reference to a mutable variable. I find adding the
+\texttt{mut} keyword to a binding to be a helpful "confirmation" step for mindful
+mutability.
+}
 \end{frame}
 
 
 \begin{frame}[fragile]
 \frametitle{\st{Im}Mutability --- Interior (hidden)}
-\begin{comment}
-Some types allow mutation through an "immutable" reference. That's a hint that the
-term "immutable reference" is a bit of a misnomer. Instead of talking about "immutable"
-and "mutable" references, sometimes it's better to use the terms "shared" and "exclusive",
-respectively.
-
-Rust prevents data races by only allowing writes via an exclusive reference.
-\end{comment}
 
 Some types allow mutation through an "immutable" reference:
 
@@ -519,23 +541,27 @@ Some types allow mutation through an "immutable" reference:
 \bigskip
 
 \begin{tabular}{l l l l}
-Type & Better Name & Multiplicity & Can store \\
+Type & Better Name & Multiplicity & Writable (\texttt{*x = ..}) \\
 \hline
 \texttt{\&T} & Shared reference & Many & No \\
 \texttt{\&mut T} & Exclusive reference & One & Yes
 \end{tabular}
 
+\note{    
+Some types allow mutation through an "immutable" reference. That's a hint that the
+term "immutable reference" is a bit of a misnomer. Instead of talking about "immutable"
+and "mutable" references, sometimes it's better to use the terms "shared" and "exclusive",
+respectively.
+
+\medskip
+
+Rust prevents data races by only allowing writes via an exclusive reference.
+}
 \end{frame}
 
 
 \begin{frame}[fragile]
 \frametitle{\st{Im}Mutability --- Interior (hidden)}
-\begin{comment}
-When is interior mutability useful? 
-
-It's necessary for thread-shared mutable state, and that's the only time I've used it.
-I've never used `Cell` or `RefCell` and I haven't thought about when they'd be justified.
-\end{comment}
 
 \begin{block}{Example}
 \begin{minted}{rust}
@@ -560,6 +586,14 @@ fn f_S(s: &S) -> { .. }
 \end{minted}
 \end{block}
 
+\note{
+When is interior mutability useful?
+
+\bigskip
+
+It's necessary for thread-shared mutable state, and that's the only time I've used it.
+I've never used `Cell` or `RefCell` and I haven't thought about when they'd be justified.
+}
 \end{frame}
 
 
@@ -629,15 +663,6 @@ fn fold<M: Monoid>(xs: Vec<M>) -> M { .. }
 
 \begin{frame}[fragile]
 \frametitle{Static types --- reference lifetime analysis}
-\begin{comment}
-Reference lifetime analysis, generally known as "borrow checking", determines at compile
-time whether a program references data in a safe way.
-
-For example, you're allowed to get a refrence to a struct's field, pass it to and return
-it from functions, store it in another datatype, etc. and the compiler will prevent you
-from doing anything that could cause the reference to outlive the struct. In other words,
-no dangling references / use-after-frees.
-\end{comment}
 
 Every reference points to valid memory.
 
@@ -691,6 +716,17 @@ long* bad() {
 
 \end{columns}
 
+\note{
+Reference lifetime analysis, generally known as "borrow checking", determines at compile
+time whether a program references data in a safe way.
+
+\medskip
+
+For example, you're allowed to get a refrence to a struct's field, pass it to and return
+it from functions, store it in another datatype, etc. and the compiler will prevent you
+from doing anything that could cause the reference to outlive the struct. In other words,
+no dangling references / use-after-frees.
+}
 \end{frame}
 
 
@@ -831,7 +867,18 @@ g(x);
 
 \begin{frame}[c,fragile]
 \frametitle{Static types and functional programming}
-\begin{comment}
+
+\begin{itemize}
+\item \href{https://en.wikipedia.org/wiki/Curry%E2%80%93Howard_correspondence}{Curry-Howard correspondence}: types are propositions and (lambda calculus) programs are proofs
+\item Only holds in general when a type system is decidable
+\item Rust's type system is (technically) undecidable
+\begin{itemize}
+\item \url{https://sdleffler.github.io/RustTypeSystemTuringComplete/}
+\item \url{https://github.com/Ashymad/fortraith}
+\end{itemize}
+\end{itemize}
+
+\note{
 There's a deep theoretical reason that types are associated with functional programming.
 The lambda calculus is a turing-complete model of computation which consists *only* of
 functions. The definitive functional programming language. There are ways of defining
@@ -840,19 +887,22 @@ setting, a type is equivalent to a proposition, and a well-typed lambda calculus
 is a proof of that proposition. This is known as the Curry-Howard correspondence and I
 think Donovan will be covering it in more detail next month. 
 
+\medskip
+
 Given this, some people might suggest that a functional programming language is one
 that corresponds to a logic via Curry-Howard.
+
+\medskip
 
 The validity of "types as propositions and proofs as programs" for a programming
 language requires type checking of that language to be decidable.
 
+\medskip
+
 Rust's type checker is known to be undecidable. It's possible to write Rust programs
 that would take an infinite amount of time to type check. I think it's nearly impossible
 in a typical software engineering context.
-\end{comment}
-
-TODO
-
+}
 \end{frame}
 
 
@@ -923,7 +973,7 @@ let y = x + 2
 
 
 \begin{frame}[fragile]
-\frametitle{Equational reasoning}
+\frametitle{Equational reasoning in Rust}
 Not always possible in Rust.
 
 \begin{columns}
@@ -978,7 +1028,7 @@ y + y
 
 
 \begin{frame}[fragile]
-\frametitle{Equational reasoning}
+\frametitle{Equational reasoning in Rust}
 Not always possible in Rust.
 
 \begin{columns}
@@ -1031,30 +1081,11 @@ f() + f()
 
 
 \begin{frame}[fragile]
-\frametitle{Equational reasoning}
-\begin{comment}
-An expression that depends on an implicit context can evaluate to different results at
-different points in the program.
+\frametitle{Equational reasoning in Rust}
 
-In example 1, the expression `f(x)` applying the same function to the same reference
-could return different values at different points in the program. It depends on an
-implicit mutable store.
+Equational reasoning fails when expressions depend on an implicit context.
 
-An expression that *changes* an implicit context is not safe to inline, even if it
-returns the same result every time. Inlining such expressions can change the meaning
-of the program, because the program's meaning depends on how many times the expression
-is evaluated.
-
-\end{comment}
-
-Equational reasoning can fail for two reasons:
-
-\begin{enumerate}
-\item Evaluation of an expression depends on implicit context
-\item Evaluation of an expression changes an implicit context
-\end{enumerate}
-
-\begin{block}{Example 1 --- implicit dependency}
+\begin{block}{Example 1 --- read}
 \begin{minted}{rust}
 fn f(x: &mut u32) -> u32 { *x + 1 }
 
@@ -1063,7 +1094,7 @@ f(x)
 \end{minted}
 \end{block}
 
-\begin{block}{Example 2 --- implicit change}
+\begin{block}{Example 2 --- read-write}
 \begin{minted}{rust}
 fn f(x: &mut u32) -> u32 { *x += 1; 0 }
 
@@ -1072,6 +1103,314 @@ f(x)
 \end{minted}
 \end{block}
 
+\note{
+An expression that depends on an implicit context can evaluate to different results at
+different points in the program.
+
+\medskip
+
+In example 1, the expression \texttt{f(x)}, applying the same function to the same reference,
+could return different values at different points in the program. It depends on an
+implicit mutable store.
+
+\medskip
+
+An expression that \emph{changes} an implicit context is not safe to inline, even if it
+returns the same result every time --- see example 2. Inlining such expressions can change the meaning
+of the program, because the program's meaning depends on how many times the expression
+is evaluated.
+}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Equational reasoning in Rust}
+Widespread equational reasoning is not a design goal for Rust.
+
+\medskip
+
+Many standard library functions are non-pure / have side-effects, e.g.:
+
+\begin{itemize}
+\item \href{https://doc.rust-lang.org/std/io/index.html}{Standard input / output}
+\item \href{https://doc.rust-lang.org/std/env/index.html}{Environment variables}
+\item \href{https://doc.rust-lang.org/stable/std/fs/index.html}{File system access}
+\item \href{https://doc.rust-lang.org/std/net/index.html}{Networking}
+\end{itemize}
+
+\begin{block}{Terminology}
+\begin{itemize}
+\item An expression whose evaluation does not depend on an implicit context is described
+as \emph{pure}.
+
+\item A function that doesn't depend on an implicit context is a \emph{pure function}.
+
+\item Changes to an implicit context are called \emph{side-effects}.
+\end{itemize}
+\end{block}
+
+\note{
+Mutable memory isn't the only implicit context in Rust programs. There is also the
+program input / output, environment variables, file system, networking, among others.
+
+\medskip
+
+In Rust, the level of equational reasoning in a codebase depends on the programmers' judgement.
+When writing new code, the author decides whether or not equational reasoning is relevant.
+When refactoring, the programmer has to understand whether they are working with pure
+or non-pure functions.
+}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Equational reasoning and mutability}
+
+Mutability doesn't always break equational reasoning.
+
+\begin{block}{A pure function that uses mutability}
+\begin{minted}{rust}
+fn add(x: u32, y: u32) -> u32 {
+    let mut counter = y;
+    let mut result = x;
+    
+    while counter > 0 {
+        counter -= 1;
+        result += 1;
+    }
+    
+    result
+}
+\end{minted}
+\end{block}
+
+\note{
+I've showed a bunch of examples where mutability, in particular mutable references, breaks
+equational reasoning. But mutability isn't \emph{intrinsically} opposed to equational reasoning.
+
+Here is an example of a pure function that uses mutability internally. Equational reasoning
+still holds.
+}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Equational reasoning and mutability}
+Rust's \emph{uniqueness types} offer another way to use mutation while
+preserving equational reasoning.
+
+\begin{block}{Example}
+\begin{minted}{rust}
+fn push<T>(mut xs: Vec<T>, x: T) -> Vec<T> {
+    xs.push(x);
+    xs
+}
+
+fn length<T>(xs: &Vec<T>) -> usize {
+    xs.len()
+}
+
+let xs = vec![1, 2, 3]
+let three = length(&xs);
+let new_xs = push(xs, 4);
+three + three
+\end{minted}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Equational reasoning and mutability}
+Rust's \emph{uniqueness types} offer another way to use mutation while
+preserving equational reasoning.
+
+\begin{block}{Evaluation}
+
+\begin{minted}{rust}
+let xs = vec![1, 2, 3]
+let three = length(&xs);
+let new_xs = push(xs, 4);
+three + three
+\end{minted}
+
+\(\leadsto\)
+
+\begin{minted}{rust}
+let xs = /* pointer `p` to [1, 2, 3] */;
+let three = length(&xs);
+let new_xs = push(xs, 4);
+three + three
+\end{minted}
+
+\(\leadsto\)
+
+...
+
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Equational reasoning and mutability}
+Rust's \emph{uniqueness types} offer another way to use mutation while
+preserving equational reasoning.
+
+\begin{block}{Evaluation}
+
+...
+
+\(\leadsto\)
+
+\begin{minted}{rust}
+let three = 3; /* length(&xs) */
+let new_xs = push(xs, 4);
+three + three
+\end{minted}
+
+\(\leadsto\)
+
+\begin{minted}{rust}
+let new_xs = /* pointer `p` to [1, 2, 3, 4] */;
+three + three
+\end{minted}
+
+\(\leadsto\)
+
+\begin{minted}{rust}
+3 + 3
+\end{minted}
+
+\(\leadsto\)
+
+\begin{minted}{rust}
+6
+\end{minted}
+
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Equational reasoning and mutability}
+Rust's \emph{uniqueness types} offer another way to use mutation while
+preserving equational reasoning.
+
+\medskip
+
+A unique variable is only in scope while it's guaranteed to remain unchanged.
+
+\begin{block}{Example}
+\begin{minted}{rust}
+fn push<T>(mut xs: Vec<T>, x: T) -> Vec<T> { .. }
+
+fn length<T>(xs: &Vec<T>) -> usize { .. }
+
+let xs = vec![1, 2, 3]
+// let three = length(&xs);
+let new_xs = push(xs, 4);
+// error: borrow of moved value `xs`
+length(&xs) + length(&xs)
+//     ^^^ value borrowed here after move
+\end{minted}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Equational reasoning and mutability}
+Rust's \emph{uniqueness types} offer another way to use mutation while
+preserving equational reasoning.
+
+\medskip
+
+A unique variable is only in scope while it's guaranteed to remain unchanged.
+
+\begin{block}{Example}
+\begin{minted}{rust}
+fn push<T>(mut xs: Vec<T>, x: T) -> Vec<T> { .. }
+
+fn length<T>(xs: &Vec<T>) -> usize { .. }
+
+let xs = vec![1, 2, 3]
+// `xs` is immutable...
+let new_xs = push(xs, 4); // ...until we actually change it
+.. // after which we can no longer refer to `xs`
+\end{minted}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[c]
+\frametitle{Summary}
+
+How Rust relates to:
+
+\begin{itemize}
+\item Algebraic datatypes and higher-order functions
+\item Immutability
+\item Static types
+\item Equational reasoning
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Functional programming?}
+
+\begin{itemize}
+\item Focused on how we write and reason about programs
+\begin{itemize}
+\item Independent of specific program behaviours
+\end{itemize}
+\item Needs to be counterbalanced by other topics / concerns
+\end{itemize}
+
+\note<+>{
+What is functional programming? I'm still going to refrain from a definition.
+
+\bigskip
+
+But I have a final observation to share. These four points I've discussed include
+specific tools we use to write programs (language features), styles of code (preference
+for immutability or mutability), and ways of reasoning about code. 
+
+\bigskip
+
+I think this isn't a coincidence: it seems to me that functional programming is largely
+concerned with programs themselves, and the process of programming, as objects of study.
+It is less concerned with the specific behaviours of any particular program.
+
+\bigskip
+
+Another way to put it is that FP seems to focus on the relationship between programmers
+and programs, rather than the relationship between programs and the world.
+
+\bigskip
+
+I think this is super important and is also inherently risky. It means that the subject
+of FP, like other reflective / meta-level subjects, is especially prone to "navel-gazing".
+}
+
+\note<+>{
+If functional programming is less concerned with specific program behaviours, then it's
+a necessarily incomplete answer to the question of how to create good software. I don't
+think FP is going to tell me about the appropriate memory / CPU usage bounds for a program
+and how to achieve them. Or how to create intuitive user interfaces or render photorealistic
+3D graphics or make sure a drone stays level when it flies.
+
+\bigskip
+
+I think that in the past my definition of "good software" was missing a few dimensions,
+which lead to me overestimating the important of "functional programming" in "good software".
+Now I know that FP isn't a panacea and it doesn't have to be. Whatever it is, it's now one
+of many tools of thought for pushing my software along a few of many dimensions of "good".
+}
 \end{frame}
 
 
