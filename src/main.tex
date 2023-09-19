@@ -100,13 +100,13 @@ programmer.
 
 
 \begin{frame}[c,fragile]
-\frametitle{What \emph{is} functional programming?}
+\frametitle{What is functional programming?}
 
 \begin{itemize}
-\item Programming with functions?
-\item ...with higher-order functions?
-\item ...with immutable data structures?
-\item Writing Haskell in disguise? 
+\onslide<2->\item Programming with functions?
+\onslide<3->\item ...with higher-order functions?
+\onslide<4->\item ...with immutable data structures?
+\onslide<5->\item Writing Haskell in disguise? 
 \end{itemize}
 
 \note{
@@ -144,13 +144,7 @@ true of my experience that might also be true for you:
 
 \medskip
 
-When I choose between similar things, I have a tendency toward seeing my choice as
-somehow, objectively, "more right" than the alternatives. Usually this tendency is
-incorrect, and it takes a conscious effort for me to see that.
-
-\medskip
-
-I also enjoy spend time with people who have made similar choices. I like talking about
+I enjoy spending time with people who have similar interests to me. I like talking about
 programming with other programmers (that's why I'm here tonight!), and listening to music
 with people who have similar tastes. In situations like these, in a community of sorts,
 I feel a kind of satisfaction that I don't feel when I'm alone or with people who are
@@ -158,8 +152,9 @@ extremely different to me.
 
 \medskip
 
-All this is to say that I find shared context / community / meeting people with similar
-interests to be \emph{very} meaningful.
+I've noticed that if I don't pay enough attention,
+I have a tendency to act as if \emph{my} interests / tastes/ preferences are somehow objectively
+better than the alternatives.
 }
 
 \note<+>{
@@ -284,6 +279,13 @@ let z = y.second;
 \end{columns}
 \end{block}
 
+\note{
+Rust has sums, which it calls "enums", and products, which it calls "structs".
+
+\medskip
+
+Enums are examined by pattern matching, and structs by field accessors.
+}
 \end{frame}
 
 
@@ -613,7 +615,7 @@ Rust prevents data races by only allowing writes via an exclusive reference.
 \begin{frame}[fragile]
 \frametitle{\st{Im}Mutability --- Interior (hidden)}
 
-\begin{block}{Use}
+\begin{block}{Definition}
 \begin{minted}{rust}
 fn increment_interior(x: &Cell<u64>) -> u64 {
     let result = x.get() + x.get();
