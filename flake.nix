@@ -32,6 +32,8 @@
           
             inkscape
             python310Packages.pygments
+              
+            pympress
           ];
         };        
       }

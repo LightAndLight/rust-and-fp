@@ -225,6 +225,7 @@ Before I reveal them, I want to do a survey. What are some of the ideas \emph{yo
 \begin{columns}
 
 \begin{column}[T]{0.48\textwidth}
+
 \begin{block}{Definition}
 \small
 \begin{minted}{rust}
@@ -242,7 +243,7 @@ struct Product<A, B>{
 \end{column}
 
 \begin{column}[T]{0.48\textwidth}
-\begin{block}{Creation}
+\onslide<2->\begin{block}{Creation}
 \small
 \begin{minted}{rust}
 let x = Sum::Left(1);
@@ -260,7 +261,7 @@ let z = Product{
 
 \end{columns}
 
-\begin{block}{Use}
+\onslide<3->\begin{block}{Use}
 \begin{columns}
 \begin{column}[T]{0.48\textwidth}
 \small
@@ -294,7 +295,7 @@ let z = y.second;
 \item Has a number of shorthands that make ADTs even more enjoyable to work with
 \begin{itemize}
 \medskip
-\item Named enum fields
+\onslide<2->\item Named enum fields
 \begin{minted}{rust}
 enum Sum<A, B>{
     Left{left_arg: A},
@@ -302,13 +303,13 @@ enum Sum<A, B>{
 }
 \end{minted}
 \medskip
-\item Named field punning
+\onslide<3->\item Named field punning
 \begin{minted}{rust}
 let first = ..; let second = ..;
 let z = Pair{first, second};
 \end{minted}
 \medskip
-\item Disjunctive patterns / "or-patterns"
+\onslide<4->\item Disjunctive patterns / "or-patterns"
 \begin{minted}{rust}
 match x {
     0 => ..,
@@ -352,9 +353,9 @@ let y = f(x);
 
 \bigskip
 
-Higher-order functions are fairly common in the standard library.
+\onslide<2->Higher-order functions are fairly common in the standard library.
 
-\begin{block}{Example: \href{https://doc.rust-lang.org/std/iter/struct.Map.html}{\texttt{map}}}
+\onslide<2->\begin{block}{Example: \href{https://doc.rust-lang.org/std/iter/struct.Map.html}{\texttt{map}}}
 \begin{minted}{rust}
 let xs: Vec<u32> = vec![1, 2, 3, 4];
 let ys: Vec<u32> = xs.iter().map(|x| x + 1).collect();
@@ -430,11 +431,11 @@ of "functional programming".
 
 \bigskip
 
-Algebraic datatypes and higher-order functions are interdefinable:
+\onslide<2->Algebraic datatypes and higher-order functions are interdefinable:
 
 \begin{itemize}
-\item ADTs via HOFs --- \href{https://en.wikipedia.org/wiki/Church_encoding}{Church encoding}
-\item HOFs via ADTs --- \href{https://en.wikipedia.org/wiki/Defunctionalization}{Defunctionalization}
+\onslide<3->\item ADTs via HOFs --- \href{https://en.wikipedia.org/wiki/Church_encoding}{Church encoding}
+\onslide<4->\item HOFs via ADTs --- \href{https://en.wikipedia.org/wiki/Defunctionalization}{Defunctionalization}
 \end{itemize}
 
 \note{
@@ -483,12 +484,12 @@ x = x + 1; // error: cannot assign twice to immutable variable `x`
 
 \bigskip
 
-Rust allows mutability, which comes in 3 flavours:
+\onslide<2->Rust allows mutability, which comes in 3 flavours:
 
 \begin{itemize}
-\item Local mutability --- mild
-\item Mutable references --- medium
-\item Interior (hidden) mutability --- spicy
+\onslide<3->\item Local mutability --- mild
+\onslide<4->\item Mutable references --- medium
+\onslide<5->\item Interior (hidden) mutability --- spicy
 \end{itemize}
 \end{frame}
 
@@ -589,11 +590,11 @@ Some types allow mutation through an "immutable" reference:
 
 \bigskip
 
-\begin{tabular}{l l l l}
+\onslide<2->\begin{tabular}{l l l l}
 Type & Better Name & Multiplicity & Writable (\texttt{*x = ..}) \\
 \hline
-\texttt{\&T} & Shared reference & Many & No \\
-\texttt{\&mut T} & Exclusive reference & One & Yes
+\onslide<3->\texttt{\&T} & Shared reference & Many & No \\
+\onslide<4->\texttt{\&mut T} & Exclusive reference & One & Yes
 \end{tabular}
 
 \note{    
@@ -612,7 +613,7 @@ Rust prevents data races by only allowing writes via an exclusive reference.
 \begin{frame}[fragile]
 \frametitle{\st{Im}Mutability --- Interior (hidden)}
 
-\begin{block}{Example}
+\begin{block}{Use}
 \begin{minted}{rust}
 fn increment_interior(x: &Cell<u64>) -> u64 {
     let result = x.get() + x.get();
@@ -624,7 +625,7 @@ fn increment_interior(x: &Cell<u64>) -> u64 {
 
 Mutability is no longer in the type signature.
 
-\begin{block}{Interior mutability}
+\begin{block}{Example}
 \begin{minted}{rust}
 struct S{
     x: Cell<u64>
@@ -711,6 +712,7 @@ fn fold<M: Monoid>(xs: Vec<M>) -> M { .. }
 \frametitle{Static types --- uncommon features}
 
 \begin{itemize}
+\item Mutability tracking --- \texttt{\&T} vs. \texttt{\&mut T}
 \item Reference lifetime analysis (borrow checking)
 \item Uniqueness types
 \end{itemize}
@@ -794,7 +796,7 @@ no dangling references / use-after-frees.
 \begin{columns}
 
 \begin{column}[T]{0.48\textwidth}
-\begin{block}{Concurrent use}
+\onslide<2->\begin{block}{Concurrent use}
 \small
 \begin{minted}{rust}
 fn f(x: &T, y: &T) { .. }
@@ -808,7 +810,7 @@ f(&x, &x); // ok
 \end{column}
 
 \begin{column}[T]{0.48\textwidth}
-\begin{block}{Sequential use}
+\onslide<3->\begin{block}{Sequential use}
 \small
 \begin{minted}{rust}
 fn g(x: &T) { .. }
@@ -836,7 +838,7 @@ g(&x); // ok
 \begin{columns}
 
 \begin{column}[T]{0.48\textwidth}
-\begin{block}{Concurrent use}
+\onslide<2->\begin{block}{Concurrent use}
 \small
 \begin{minted}{rust}
 fn f(x: &mut T, y: &mut T) { .. }
@@ -855,7 +857,7 @@ f(&mut x, &mut x);
 \end{column}
 
 \begin{column}[T]{0.48\textwidth}
-\begin{block}{Sequential use}
+\onslide<3->\begin{block}{Sequential use}
 \small
 \begin{minted}{rust}
 fn g(x: &mut T) { .. }
@@ -883,7 +885,7 @@ g(&mut x); // ok
 \begin{columns}
 
 \begin{column}[T]{0.48\textwidth}
-\begin{block}{Concurrent use}
+\onslide<2->\begin{block}{Concurrent use}
 \small
 \begin{minted}{rust}
 fn f(x: T, y: T) { .. }
@@ -899,7 +901,7 @@ f(x, x);
 \end{column}
 
 \begin{column}[T]{0.48\textwidth}
-\begin{block}{Sequential use}
+\onslide<2->\begin{block}{Sequential use}
 \small
 \begin{minted}{rust}
 fn g(x: T) { .. }
@@ -918,6 +920,17 @@ g(x);
 
 \end{columns}
 
+\note{
+You can think of a variable with of a unique type as being a "resource"
+that can be consumed by a function. After the resource has been consumed,
+it is no longer available for use. Rust calls this "transferring ownership".
+
+Following the "ownership" metaphor, taking a reference is called "borrowing".
+(Because ownership is returned once the reference is deleted)
+
+I find unique types extremely interesting because of how they interact with
+equational reasoning and mutability, which I will cover later.
+}
 \end{frame}
 
 
@@ -925,13 +938,15 @@ g(x);
 \frametitle{Static types and functional programming}
 
 \begin{itemize}
-\item \href{https://en.wikipedia.org/wiki/Curry%E2%80%93Howard_correspondence}{Curry-Howard correspondence}: types are propositions and (lambda calculus) programs are proofs
-\item Only holds in general when a type system is decidable
-\item Rust's type system is (technically) undecidable
+\onslide<2->\item Come to Donovan's talk next month!
+\onslide<3->\item \href{https://en.wikipedia.org/wiki/Curry%E2%80%93Howard_correspondence}{Curry-Howard correspondence}: types are propositions and (lambda calculus) programs are proofs
+\onslide<4->\item Only holds in general when a type system is decidable
+\onslide<5->\item Rust's type system is (technically) undecidable
 \begin{itemize}
 \item \url{https://sdleffler.github.io/RustTypeSystemTuringComplete/}
 \item \url{https://github.com/Ashymad/fortraith}
 \end{itemize}
+\onslide<6->\item But you probably don't need to worry about that ;)
 \end{itemize}
 
 \note{
@@ -977,7 +992,7 @@ Reasoning about / manipulating programs as if they are a set of equations.
 \begin{columns}
 
 \begin{column}[T]{0.48\textwidth}
-\begin{block}{Factor out}
+\onslide<2->\begin{block}{Factor out}
 \begin{minted}{rust}
 (y + 1) * (y + 1)
 \end{minted}
@@ -992,7 +1007,7 @@ x * x
 \end{column}
 
 \begin{column}[T]{0.48\textwidth}
-\begin{block}{Inline}
+\onslide<3->\begin{block}{Inline}
 \begin{minted}{rust}
 let x = y + 1;
 x * x
@@ -1014,15 +1029,15 @@ x * x
 \end{column}
 
 \begin{column}[T]{0.48\textwidth}
-\begin{block}{Simplify}
+\onslide<4->\begin{block}{Simplify}
 \begin{minted}{rust}
-let y = x * 1 + 2
+let y = x * 0 + 2
 \end{minted}
 
-\(\leadsto\)
+\(\leadsto \{ \; \forall x. \; x * 0 = 0 \; \}\)
 
 \begin{minted}{rust}
-let y = x + 2
+let y = 2
 \end{minted}
 \end{block}
 \end{column}
@@ -1032,6 +1047,18 @@ let y = x + 2
 
 \end{columns}
 
+\note{
+You use equational reasoning whenever you factor out an expression
+or function, and when you go the other way by inlining.
+
+\medskip
+
+Equational reasoning also comes up whenever you simpilify or optimise
+code. Optimisations are equations between programs where one side of
+the equation has a lower "cost" than the other side.
+
+It's a really important concept!
+}
 \end{frame}
 
 
@@ -1064,22 +1091,22 @@ let y = f();
 y + y
 \end{minted}
 
-\(\leadsto\)
+\onslide<2->\(\leadsto\)
 
-\begin{minted}{rust}
+\onslide<2->\begin{minted}{rust}
 let y = 3;
 y + y
 \end{minted}
 
-\(\leadsto\)
+\onslide<3->\(\leadsto\)
 
-\begin{minted}{rust}
+\onslide<3->\begin{minted}{rust}
 3 + 3
 \end{minted}
 
-\(\leadsto\)
+\onslide<4->\(\leadsto\)
 
-\begin{minted}{rust}
+\onslide<4->\begin{minted}{rust}
 6
 \end{minted}
 \end{block}
@@ -1118,21 +1145,21 @@ f() + f()
 f() + f()
 \end{minted}
 
-\(\leadsto\)
+\onslide<2->\(\leadsto\)
 
-\begin{minted}{rust}
+\onslide<2->\begin{minted}{rust}
 3 + f()
 \end{minted}
 
-\(\leadsto\)
+\onslide<3->\(\leadsto\)
 
-\begin{minted}{rust}
+\onslide<3->\begin{minted}{rust}
 3 + 4
 \end{minted}
 
-\(\leadsto\)
+\onslide<4->\(\leadsto\)
 
-\begin{minted}{rust}
+\onslide<4->\begin{minted}{rust}
 7
 \end{minted}
 \end{block}
@@ -1265,20 +1292,24 @@ Rust's \emph{uniqueness types} offer another way to use mutation while
 preserving equational reasoning.
 
 \begin{block}{Example}
-\begin{minted}{rust}
+\onslide<2->\begin{minted}{rust}
 fn push<T>(mut xs: Vec<T>, x: T) -> Vec<T> {
     xs.push(x);
     xs
 }
+\end{minted}
 
+\onslide<3->\begin{minted}{rust}
 fn length<T>(xs: &Vec<T>) -> usize {
     xs.len()
 }
+\end{minted}
 
-let xs = vec![1, 2, 3]
-let three = length(&xs);
+\onslide<4->\begin{minted}{rust}
+let xs = vec![1, 2, 3];
+let y = length(&xs);
 let new_xs = push(xs, 4);
-three + three
+y + y
 \end{minted}
 \end{block}
 
@@ -1290,27 +1321,27 @@ three + three
 Rust's \emph{uniqueness types} offer another way to use mutation while
 preserving equational reasoning.
 
-\begin{block}{Evaluation}
+\begin{block}{Execution}
 
 \begin{minted}{rust}
-let xs = vec![1, 2, 3]
-let three = length(&xs);
+let xs = vec![1, 2, 3];
+let y = length(&xs);
 let new_xs = push(xs, 4);
-three + three
+y + y
 \end{minted}
 
-\(\leadsto\)
+\onslide<2->\(\leadsto\)
 
-\begin{minted}{rust}
+\onslide<2->\begin{minted}{rust}
 let xs = /* pointer `p` to [1, 2, 3] */;
-let three = length(&xs);
+let y = length(&xs);
 let new_xs = push(xs, 4);
-three + three
+y + y
 \end{minted}
 
-\(\leadsto\)
+\onslide<2->\(\leadsto\)
 
-...
+\onslide<2->...
 
 \end{block}
 
@@ -1322,34 +1353,34 @@ three + three
 Rust's \emph{uniqueness types} offer another way to use mutation while
 preserving equational reasoning.
 
-\begin{block}{Evaluation}
+\begin{block}{Execution}
 
 ...
 
 \(\leadsto\)
 
 \begin{minted}{rust}
-let three = 3; /* length(&xs) */
+let y = 3; /* length(&xs) */
 let new_xs = push(xs, 4);
-three + three
+y + y
 \end{minted}
 
-\(\leadsto\)
+\onslide<2->\(\leadsto\)
 
-\begin{minted}{rust}
+\onslide<2->\begin{minted}{rust}
 let new_xs = /* pointer `p` to [1, 2, 3, 4] */;
-three + three
+y + y
 \end{minted}
 
-\(\leadsto\)
+\onslide<3->\(\leadsto\)
 
-\begin{minted}{rust}
+\onslide<3->\begin{minted}{rust}
 3 + 3
 \end{minted}
 
-\(\leadsto\)
+\onslide<4->\(\leadsto\)
 
-\begin{minted}{rust}
+\onslide<4->\begin{minted}{rust}
 6
 \end{minted}
 
@@ -1363,9 +1394,28 @@ three + three
 Rust's \emph{uniqueness types} offer another way to use mutation while
 preserving equational reasoning.
 
-\medskip
+\begin{block}{Example}
+\begin{minted}{rust}
+fn push<T>(mut xs: Vec<T>, x: T) -> Vec<T> { .. }
 
-A unique variable is only in scope while it's guaranteed to remain unchanged.
+fn length<T>(xs: &Vec<T>) -> usize { .. }
+
+let xs = vec![1, 2, 3]
+// let y = length(&xs);
+let new_xs = push(xs, 4);
+
+length(&xs) + length(&xs)
+
+\end{minted}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Equational reasoning and mutability}
+Rust's \emph{uniqueness types} offer another way to use mutation while
+preserving equational reasoning.
 
 \begin{block}{Example}
 \begin{minted}{rust}
@@ -1374,7 +1424,7 @@ fn push<T>(mut xs: Vec<T>, x: T) -> Vec<T> { .. }
 fn length<T>(xs: &Vec<T>) -> usize { .. }
 
 let xs = vec![1, 2, 3]
-// let three = length(&xs);
+// let y = length(&xs);
 let new_xs = push(xs, 4);
 // error: borrow of moved value `xs`
 length(&xs) + length(&xs)
@@ -1387,10 +1437,6 @@ length(&xs) + length(&xs)
 
 \begin{frame}[fragile]
 \frametitle{Equational reasoning and mutability}
-Rust's \emph{uniqueness types} offer another way to use mutation while
-preserving equational reasoning.
-
-\medskip
 
 A unique variable is only in scope while it's guaranteed to remain unchanged.
 
@@ -1407,6 +1453,11 @@ let new_xs = push(xs, 4); // ...until we actually change it
 \end{minted}
 \end{block}
 
+\note{
+I find this intriguing. \texttt{push} is a non-pure function that
+doesn't break equational reasoning. When you have a static type system,
+purity is sufficient, but not necessary for equational reasoning. 
+}
 \end{frame}
 
 
@@ -1436,13 +1487,13 @@ How Rust relates to:
 \frametitle{Functional programming?}
 
 \begin{itemize}
-\item Focused on how we write and reason about programs
+\onslide<1->\item Focused on how we write and reason about programs
 \begin{itemize}
-\item Independent of specific program behaviours
+\onslide<2->\item Independent of specific program behaviours
 \end{itemize}
-\item There are many dimensions of software quality that functional programming can't address
+\onslide<3->\item There are many dimensions of software quality that functional programming can't address
 \begin{itemize}
-\item That's okay and even good!
+\onslide<4->\item That's okay and even good!
 \end{itemize}
 \end{itemize}
 
